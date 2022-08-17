@@ -8,7 +8,8 @@
  * @format
  */
 
-import React, {type PropsWithChildren} from 'react';
+import React, { type PropsWithChildren } from 'react';
+import * as Sentry from '@sentry/react-native'
 import {
   SafeAreaView,
   ScrollView,
@@ -26,12 +27,17 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+Sentry.init({
+  dsn: 'https://496f3e59149e4466954df23f2380f261@o1341612.ingest.sentry.io/6635294',
+  environment: 'Tetsing',
+  debug: true,
 
+})
 const Section: React.FC<
   PropsWithChildren<{
     title: string;
   }>
-> = ({children, title}) => {
+> = ({ children, title }) => {
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
