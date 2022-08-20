@@ -8,116 +8,98 @@
  * @format
  */
 
-import React, { type PropsWithChildren } from 'react';
+import React, { useEffect, type PropsWithChildren } from 'react';
 import * as Sentry from '@sentry/react-native'
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
+
   Text,
-  useColorScheme,
+  TouchableOpacity,
   View,
 } from 'react-native';
+import TrackPlayer, { useProgress, State, Capability } from 'react-native-track-player';
+const tracks = [
+  {
+    id: 1,
+    url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+    title: 'ONE'
+  },
+  {
+    id: 2,
+    url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    title: 'TWo'
+  },
+]
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 Sentry.init({
   dsn: 'https://496f3e59149e4466954df23f2380f261@o1341612.ingest.sentry.io/6635294',
-  environment: 'Tetsing',
+  environment: 'Testagain',
   debug: true,
 
 })
-const Section: React.FC<
-  PropsWithChildren<{
-    title: string;
-  }>
-> = ({ children, title }) => {
-  const isDarkMode = useColorScheme() === 'dark';
+
+
+const App = () => {
+  const setupTracPlayer = async () => {
+    try {
+      TrackPlayer.updateOptions({
+        // Media controls capabilities    
+        stoppingAppPausesPlayback: true,
+
+        capabilities: [
+          Capability.Play,
+          Capability.Pause,
+          Capability.SkipToNext,
+          Capability.SkipToPrevious,
+          Capability.Stop,
+        ],
+
+        // Capabilities that will show up when the notification is in the compact form on Android
+        compactCapabilities: [Capability.Play, Capability.Pause, Capability.SkipToNext, Capability.SeekTo],
+
+        // Icons for the notification on Android (if you don't like the default ones)
+
+      });
+      await TrackPlayer.setupPlayer();
+
+      await TrackPlayer.add(tracks)
+    } catch (error) {
+      console.log(error);
+
+    }
+
+  }
+  useEffect(() => {
+
+    setupTracPlayer()
+  }, [])
+  const trackdetails = async () => {
+    let trackIndex = await TrackPlayer.getCurrentTrack();
+    let trackObject = await TrackPlayer.getTrack(trackIndex);
+    console.log(`Title: ${trackObject?.title}`);
+
+    const position = await TrackPlayer.getPosition();
+    const duration = await TrackPlayer.getDuration();
+    console.log(`${duration - position} seconds left.`);
+
+  }
+  useEffect(() => {
+    setTimeout(() => {
+
+      trackdetails()
+    }, 2000)
+  })
+  var crashmessage = "changes env  back to Testagain"
+  const progress = useProgress();
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View style={{ marginTop: 20, padding: 20 }}>
+      <TouchableOpacity style={{ backgroundColor: 'grey', height: 50, width: 50, marginVertical: 10 }} onPress={() => TrackPlayer.play()}><Text>play</Text></TouchableOpacity>
+      <TouchableOpacity style={{ backgroundColor: 'grey', height: 50, width: 50, marginVertical: 10 }} onPress={() => TrackPlayer.pause()}><Text>pause</Text></TouchableOpacity>
+      <TouchableOpacity style={{ backgroundColor: 'grey', height: 50, width: 50, marginVertical: 10 }} onPress={() => TrackPlayer.skipToNext()}><Text>next</Text></TouchableOpacity>
+      <TouchableOpacity style={{ backgroundColor: 'grey', height: 50, width: 50, marginVertical: 10 }} onPress={() => TrackPlayer.skipToPrevious()}><Text>previous</Text></TouchableOpacity>
+
     </View>
   );
 };
 
-const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;
