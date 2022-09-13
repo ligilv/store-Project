@@ -10,6 +10,7 @@
 
 import React, { useEffect, type PropsWithChildren } from 'react';
 import * as Sentry from '@sentry/react-native'
+import PlaysSceen from './src/PlaysSceen';
 import {
 
   Text,
@@ -23,11 +24,11 @@ const tracks = [
     url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
     title: 'ONE'
   },
-  {
-    id: 2,
-    url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-    title: 'TWo'
-  },
+  // {
+  //   id: 2,
+  //   url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+  //   title: 'TWo'
+  // },
 ]
 
 Sentry.init({
@@ -41,7 +42,8 @@ Sentry.init({
 const App = () => {
   const setupTracPlayer = async () => {
     try {
-      TrackPlayer.updateOptions({
+      await TrackPlayer.setupPlayer();
+      await TrackPlayer.updateOptions({
         // Media controls capabilities    
         stoppingAppPausesPlayback: true,
 
@@ -56,10 +58,8 @@ const App = () => {
         // Capabilities that will show up when the notification is in the compact form on Android
         compactCapabilities: [Capability.Play, Capability.Pause, Capability.SkipToNext, Capability.SeekTo],
 
-        // Icons for the notification on Android (if you don't like the default ones)
 
       });
-      await TrackPlayer.setupPlayer();
 
       await TrackPlayer.add(tracks)
     } catch (error) {
@@ -82,12 +82,7 @@ const App = () => {
     console.log(`${duration - position} seconds left.`);
 
   }
-  useEffect(() => {
-    setTimeout(() => {
 
-      trackdetails()
-    }, 2000)
-  })
   var crashmessage = "changes env  back to Testagain"
   const progress = useProgress();
   return (
@@ -96,7 +91,8 @@ const App = () => {
       <TouchableOpacity style={{ backgroundColor: 'grey', height: 50, width: 50, marginVertical: 10 }} onPress={() => TrackPlayer.pause()}><Text>pause</Text></TouchableOpacity>
       <TouchableOpacity style={{ backgroundColor: 'grey', height: 50, width: 50, marginVertical: 10 }} onPress={() => TrackPlayer.skipToNext()}><Text>next</Text></TouchableOpacity>
       <TouchableOpacity style={{ backgroundColor: 'grey', height: 50, width: 50, marginVertical: 10 }} onPress={() => TrackPlayer.skipToPrevious()}><Text>previous</Text></TouchableOpacity>
-
+      <Text>*^*^^^!@*E@!^**!^@*#!^*</Text>
+      <PlaysSceen />
     </View>
   );
 };
